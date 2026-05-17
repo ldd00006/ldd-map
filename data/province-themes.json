@@ -1,0 +1,50 @@
+{
+  "浙江省": {
+    "fillColor": "#e8f4e8",
+    "borderColor": "#5a8a5a",
+    "highlightFill": "#c8e6c9",
+    "highlightBorder": "#2e5a2e",
+    "style": "水墨江南",
+    "desc": "青绿山水，温婉雅致"
+  },
+  "北京市": {
+    "fillColor": "#fdf0e0",
+    "borderColor": "#c4783d",
+    "highlightFill": "#fce4c4",
+    "highlightBorder": "#8b4513",
+    "style": "皇城朱红",
+    "desc": "红墙黄瓦，庄严大气"
+  },
+  "上海市": {
+    "fillColor": "#e8f0f8",
+    "borderColor": "#4a7aaa",
+    "highlightFill": "#d0ddf0",
+    "highlightBorder": "#1e3a5f",
+    "style": "摩登海派",
+    "desc": "东方明珠，时尚现代"
+  },
+  "广东省": {
+    "fillColor": "#fff0e0",
+    "borderColor": "#d4884a",
+    "highlightFill": "#ffe8cc",
+    "highlightBorder": "#a05030",
+    "style": "岭南风情",
+    "desc": "木棉红火，开放包容"
+  },
+  "四川省": {
+    "fillColor": "#f8f0e8",
+    "borderColor": "#8b6b4a",
+    "highlightFill": "#f0e0d0",
+    "highlightBorder": "#5a3a1a",
+    "style": "天府锦绣",
+    "desc": "熊猫故里，蜀韵悠长"
+  },
+  "default": {
+    "fillColor": "#f5f2ed",
+    "borderColor": "#c4b8a8",
+    "highlightFill": "#ebe5db",
+    "highlightBorder": "#8b7b6b",
+    "style": "宣纸素色",
+    "desc": "淡雅朴素，留白之美"
+  }
+}
