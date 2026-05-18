@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { getAllRecords } from "@/lib/records";
 
-export default function RecordsPage() {
-  const records = getAllRecords();
+export default async function RecordsPage() {
+  const records = await getAllRecords();
 
   return (
     <div className="min-h-full bg-[#faf7f0]">

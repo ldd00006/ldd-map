@@ -1,5 +1,4 @@
-import fs from "fs";
-import path from "path";
+import { put, list, del } from "@vercel/blob";
 
 export interface RecordEntry {
   id: string;
@@ -11,50 +10,55 @@ export interface RecordEntry {
   createdAt: string;
 }
 
-const recordsDir = path.join(process.cwd(), "records");
-const recordsFile = path.join(recordsDir, "records.json");
+const RECORDS_META_KEY = "map/records.json";
 
-function ensureFile(): void {
-  if (!fs.existsSync(recordsDir)) {
-    fs.mkdirSync(recordsDir, { recursive: true });
-  }
-  if (!fs.existsSync(recordsFile)) {
-    fs.writeFileSync(recordsFile, "[]", "utf-8");
-  }
-}
-
-export function getAllRecords(): RecordEntry[] {
-  ensureFile();
-  const raw = fs.readFileSync(recordsFile, "utf-8");
+async function readRecords(): Promise<RecordEntry[]> {
   try {
-    const records: RecordEntry[] = JSON.parse(raw);
-    return records.sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    const { blobs } = await list({ prefix: RECORDS_META_KEY });
+    if (blobs.length === 0) return [];
+    const res = await fetch(blobs[0].url);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
   } catch {
     return [];
   }
 }
 
-export function addRecord(record: Omit<RecordEntry, "id" | "createdAt">): RecordEntry {
-  ensureFile();
-  const records = getAllRecords();
+async function writeRecords(records: RecordEntry[]): Promise<void> {
+  const json = JSON.stringify(records);
+  await put(RECORDS_META_KEY, new Blob([json], { type: "application/json" }), {
+    access: "public",
+    addRandomSuffix: false,
+  });
+}
+
+export async function getAllRecords(): Promise<RecordEntry[]> {
+  const records = await readRecords();
+  return records.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+}
+
+export async function addRecord(
+  record: Omit<RecordEntry, "id" | "createdAt">
+): Promise<RecordEntry> {
+  const records = await readRecords();
   const newRecord: RecordEntry = {
     ...record,
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
     createdAt: new Date().toISOString(),
   };
   records.push(newRecord);
-  fs.writeFileSync(recordsFile, JSON.stringify(records, null, 2), "utf-8");
+  await writeRecords(records);
   return newRecord;
 }
 
-export function deleteRecord(id: string): boolean {
-  ensureFile();
-  let records = getAllRecords();
+export async function deleteRecord(id: string): Promise<boolean> {
+  const records = await readRecords();
   const before = records.length;
-  records = records.filter((r) => r.id !== id);
-  if (records.length === before) return false;
-  fs.writeFileSync(recordsFile, JSON.stringify(records, null, 2), "utf-8");
+  const filtered = records.filter((r) => r.id !== id);
+  if (filtered.length === before) return false;
+  await writeRecords(filtered);
   return true;
 }
